@@ -174,18 +174,161 @@
         var popupContent =
           '<table>\
                     <tr>\
-                        <td style="font-weight: bold; color: #333;"><strong>Ward</strong></td>\
+                        <td style="font-weight: bold; color: #333;"><strong>Ward Name (English)</strong></td>\
                     </tr>\
                     <tr>\
                         <td>' +
-          (feature.properties["ward_name"] !== null
+          (feature.properties["proposed_ward_name_en"] !== null
             ? autolinker.link(
-                String(feature.properties["ward_name"])
-                  .replace(/'/g, "'")
-                  .toLocaleString()
+                String(feature.properties["proposed_ward_name_en"]).replace(
+                  /'/g,
+                  "'"
+                )
+              )
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333;"><strong>Ward Name (Kannada)</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td>' +
+          (feature.properties["proposed_ward_name_ka"] !== null
+            ? autolinker.link(
+                String(feature.properties["proposed_ward_name_ka"]).replace(
+                  /'/g,
+                  "'"
+                )
+              )
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333;"><strong>Ward Area (sq km)</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td>' +
+          (feature.properties["ward_area"] !== null
+            ? Number(feature.properties["ward_area"]).toFixed(1)
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333;"><strong>Municipality (English)</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td>' +
+          (feature.properties["name_en"] !== null
+            ? autolinker.link(
+                String(feature.properties["name_en"]).replace(/'/g, "'")
+              )
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333;"><strong>Municipality (Kannada)</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td>' +
+          (feature.properties["name_ka"] !== null
+            ? autolinker.link(
+                String(feature.properties["name_ka"]).replace(/'/g, "'")
+              )
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333;"><strong>Population</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td>' +
+          (feature.properties["population"] !== null
+            ? Number(feature.properties["population"]).toLocaleString()
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333;"><strong>SC Population</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td>' +
+          (feature.properties["sc_population"] !== null
+            ? Number(feature.properties["sc_population"]).toLocaleString()
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333;"><strong>ST Population</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td>' +
+          (feature.properties["st_population"] !== null
+            ? Number(feature.properties["st_population"]).toLocaleString()
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333;"><strong>Male Population</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td>' +
+          (feature.properties["male_population"] !== null
+            ? Number(feature.properties["male_population"]).toLocaleString()
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333;"><strong>Female Population</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td>' +
+          (feature.properties["female_population"] !== null
+            ? Number(feature.properties["female_population"]).toLocaleString()
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333;"><strong>Assembly Constituency</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td>' +
+          (feature.properties["assembly_constituency_name_en"] !== null
+            ? autolinker.link(
+                String(
+                  feature.properties["assembly_constituency_name_en"]
+                ).replace(/'/g, "'")
+              )
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333;"><strong>Parliamentary Constituency (English)</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td>' +
+          (feature.properties["parliamentary_constituency_name_en"] !== null
+            ? autolinker.link(
+                String(
+                  feature.properties["parliamentary_constituency_name_en"]
+                ).replace(/'/g, "'")
+              )
+            : "") +
+          '</td>\
+                    </tr>\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333;"><strong>Parliamentary Constituency (Kannada)</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td>' +
+          (feature.properties["parliamentary_constituency_name_ka"] !== null
+            ? autolinker.link(
+                String(
+                  feature.properties["parliamentary_constituency_name_ka"]
+                ).replace(/'/g, "'")
               )
             : "") +
           "</td>\
+                    </tr>\
                 </table>";
         var content = removeEmptyRowsFromPopupContent(popupContent, feature);
         layer.bindPopup(content, { maxHeight: 400 });
@@ -202,7 +345,7 @@
           weight: 3,
           fill: true,
           fillOpacity: 0.2,
-          fillColor: "rgba(255,255,255,1.0)",
+          fillColor: "rgba(200,200,200,1.0)",
           interactive: true,
         };
       }
@@ -261,53 +404,184 @@
           },
           mouseover: highlightFeature,
         });
-        var popupContent =
-          '<table>\
-                    <tr>\
-                        <td style="font-weight: bold; color: #333;"><strong>Lake Name</strong></td>\
-                    </tr>\
-                    <tr>\
-                        <td>' +
-          (feature.properties["Name_of_th"] !== null
-            ? autolinker.link(
-                String(feature.properties["Name_of_th"])
-                  .replace(/'/g, "'")
-                  .toLocaleString()
-              )
-            : "") +
-          '</td>\
-                    </tr>\
-                    <tr>\
-                        <td style="font-weight: bold; color: #333;"><strong>Area (acres)</strong></td>\
-                    </tr>\
-                    <tr>\
-                        <td>' +
-          (feature.properties["Area"] !== null
-            ? autolinker.link(
-                String(feature.properties["Area"])
-                  .replace(/'/g, "'")
-                  .toLocaleString()
-              )
-            : "") +
-          '</td>\
-                    </tr>\
-                    <tr>\
-                        <td style="font-weight: bold; color: #333;"><strong>Ward Name</strong></td>\
-                    </tr>\
-                    <tr>\
-                        <td>' +
-          (feature.properties["Ward_Name"] !== null
-            ? autolinker.link(
-                String(feature.properties["Ward_Name"])
-                  .replace(/'/g, "'")
-                  .toLocaleString()
-              )
-            : "") +
-          "</td>\
-                    </tr>\
-                </table>";
-        var content = removeEmptyRowsFromPopupContent(popupContent, feature);
-        layer.bindPopup(content, { maxHeight: 400 });
+        var popupContent = "<table>";
+
+        // Lake Name
+        if (
+          feature.properties["Name_of_th"] !== null &&
+          feature.properties["Name_of_th"] !== undefined &&
+          feature.properties["Name_of_th"] !== "" &&
+          feature.properties["Name_of_th"] !== "-na-"
+        ) {
+          popupContent +=
+            '\
+                          <tr>\
+                              <td style="font-weight: bold; color: #333;"><strong>Lake Name</strong></td>\
+                          </tr>\
+                          <tr>\
+                              <td>' +
+            autolinker.link(
+              String(feature.properties["Name_of_th"])
+                .replace(/'/g, "'")
+                .toLocaleString()
+            ) +
+            "</td>\
+                          </tr>";
+        }
+
+        // Area
+        if (
+          feature.properties["Area"] !== null &&
+          feature.properties["Area"] !== undefined &&
+          feature.properties["Area"] !== "" &&
+          feature.properties["Area"] !== "-na-"
+        ) {
+          popupContent +=
+            '\
+                          <tr>\
+                              <td style="font-weight: bold; color: #333;"><strong>Area (acres)</strong></td>\
+                          </tr>\
+                          <tr>\
+                              <td>' +
+            autolinker.link(
+              String(feature.properties["Area"])
+                .replace(/'/g, "'")
+                .toLocaleString()
+            ) +
+            "</td>\
+                          </tr>";
+        }
+
+        // Ward Number
+        if (
+          feature.properties["Ward_Numbe"] !== null &&
+          feature.properties["Ward_Numbe"] !== undefined &&
+          feature.properties["Ward_Numbe"] !== "" &&
+          feature.properties["Ward_Numbe"] !== "-na-"
+        ) {
+          popupContent +=
+            '\
+                          <tr>\
+                              <td style="font-weight: bold; color: #333;"><strong>Ward Number</strong></td>\
+                          </tr>\
+                          <tr>\
+                              <td>' +
+            autolinker.link(
+              String(feature.properties["Ward_Numbe"])
+                .replace(/'/g, "'")
+                .toLocaleString()
+            ) +
+            "</td>\
+                          </tr>";
+        }
+
+        // Ward Councillor
+        if (
+          feature.properties["Ward-Couns"] !== null &&
+          feature.properties["Ward-Couns"] !== undefined &&
+          feature.properties["Ward-Couns"] !== "" &&
+          feature.properties["Ward-Couns"] !== "-na-"
+        ) {
+          popupContent +=
+            '\
+                          <tr>\
+                              <td style="font-weight: bold; color: #333;"><strong>Ward Councillor</strong></td>\
+                          </tr>\
+                          <tr>\
+                              <td>' +
+            autolinker.link(
+              String(feature.properties["Ward-Couns"]).replace(/'/g, "'")
+            ) +
+            "</td>\
+                          </tr>";
+        }
+
+        // Ward Office
+        if (
+          feature.properties["Ward_offic"] !== null &&
+          feature.properties["Ward_offic"] !== undefined &&
+          feature.properties["Ward_offic"] !== "" &&
+          feature.properties["Ward_offic"] !== "-na-"
+        ) {
+          popupContent +=
+            '\
+                          <tr>\
+                              <td style="font-weight: bold; color: #333;"><strong>Ward Office</strong></td>\
+                          </tr>\
+                          <tr>\
+                              <td>' +
+            autolinker.link(
+              String(feature.properties["Ward_offic"]).replace(/'/g, "'")
+            ) +
+            "</td>\
+                          </tr>";
+        }
+
+        // Ward Contact
+        if (
+          feature.properties["Ward_Conta"] !== null &&
+          feature.properties["Ward_Conta"] !== undefined &&
+          feature.properties["Ward_Conta"] !== "" &&
+          feature.properties["Ward_Conta"] !== "-na-"
+        ) {
+          popupContent +=
+            '\
+                          <tr>\
+                              <td style="font-weight: bold; color: #333;"><strong>Ward Contact</strong></td>\
+                          </tr>\
+                          <tr>\
+                              <td>' +
+            autolinker.link(
+              String(feature.properties["Ward_Conta"]).replace(/'/g, "'")
+            ) +
+            "</td>\
+                          </tr>";
+        }
+
+        // Facebook
+        if (
+          feature.properties["Facebook"] !== null &&
+          feature.properties["Facebook"] !== undefined &&
+          feature.properties["Facebook"] !== "" &&
+          feature.properties["Facebook"] !== "-na-"
+        ) {
+          popupContent +=
+            '\
+                          <tr>\
+                              <td style="font-weight: bold; color: #333;"><strong>Facebook</strong></td>\
+                          </tr>\
+                          <tr>\
+                              <td>' +
+            autolinker.link(
+              String(feature.properties["Facebook"]).replace(/'/g, "'")
+            ) +
+            "</td>\
+                          </tr>";
+        }
+
+        // Custodian
+        if (
+          feature.properties["Custodian"] !== null &&
+          feature.properties["Custodian"] !== undefined &&
+          feature.properties["Custodian"] !== "" &&
+          feature.properties["Custodian"] !== "-na-"
+        ) {
+          popupContent +=
+            '\
+                          <tr>\
+                              <td style="font-weight: bold; color: #333;"><strong>Custodian</strong></td>\
+                          </tr>\
+                          <tr>\
+                              <td>' +
+            autolinker.link(
+              String(feature.properties["Custodian"]).replace(/'/g, "'")
+            ) +
+            "</td>\
+                          </tr>";
+        }
+
+        popupContent += "</table>";
+        layer.bindPopup(popupContent, { maxHeight: 400 });
       }
 
       function style_lakes() {
