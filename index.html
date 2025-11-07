@@ -9,6 +9,7 @@
     />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="stylesheet" href="css/leaflet.css" />
     <link rel="stylesheet" href="css/L.Control.Layers.Tree.css" />
     <link rel="stylesheet" href="css/qgis2web.css" />
@@ -51,9 +52,13 @@
     <script src="js/labelgun.min.js"></script>
     <script src="js/labels.js"></script>
     <script src="js/leaflet.photon.js"></script>
+    <script src="data/swd_primary.js"></script>
+    <script src="data/swd_secondary.js"></script>
     <script src="data/municipalities.js"></script>
     <script src="data/wards.js"></script>
     <script src="data/lakes.js"></script>
+    <script src="data/flooding_locations.js"></script>
+
     <script>
       var highlightLayer;
       function highlightFeature(e) {
@@ -128,6 +133,30 @@
       );
       layer_OSMStandard_0;
       map.addLayer(layer_OSMStandard_0);
+
+      // Add black & white OSM layer
+      var layer_OSMBW = L.tileLayer(
+        "http://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          pane: "pane_OSMStandard_0",
+          opacity: 1.0,
+          attribution: "",
+          minZoom: 1,
+          maxZoom: 28,
+          minNativeZoom: 0,
+          maxNativeZoom: 19,
+          className: "bw-tiles",
+        }
+      );
+
+      // Add CSS for black & white filter
+      var style = document.createElement("style");
+      style.innerHTML = ".bw-tiles { filter: grayscale(100%); }";
+      document.head.appendChild(style);
+
+      // Create empty layer for "no base layer" option
+      var layer_NoBase = L.layerGroup([]);
+
       function pop_municipalities(feature, layer) {
         layer.on({
           mouseout: function (e) {
@@ -334,6 +363,158 @@
         layer.bindPopup(content, { maxHeight: 400 });
       }
 
+      function pop_swd_primary(feature, layer) {
+        layer.on({
+          mouseout: function (e) {
+            for (var i in e.target._eventParents) {
+              if (typeof e.target._eventParents[i].resetStyle === "function") {
+                e.target._eventParents[i].resetStyle(e.target);
+              }
+            }
+          },
+          mouseover: highlightFeature,
+        });
+        var popupContent =
+          '<table>\
+                    <tr>\
+                        <th colspan="2" style="color: rgba(255,140,0,1.0); padding: 8px; font-size: 14px; text-align: center;">Primary Storm Water Drain</th>\
+                    </tr>';
+
+        var hasData = false;
+
+        // Name
+        if (
+          feature.properties["name"] !== null &&
+          feature.properties["name"] !== undefined &&
+          feature.properties["name"] !== ""
+        ) {
+          hasData = true;
+          popupContent +=
+            '\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333; text-align: center;"><strong>Name</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td style="text-align: center;">' +
+            autolinker.link(
+              String(feature.properties["name"])
+                .replace(/'/g, "'")
+                .toLocaleString()
+            ) +
+            "</td>\
+                    </tr>";
+        }
+
+        // Length
+        if (
+          feature.properties["SHAPE_Leng"] !== null &&
+          feature.properties["SHAPE_Leng"] !== undefined
+        ) {
+          hasData = true;
+          popupContent +=
+            '\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333; text-align: center;"><strong>Length (m)</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td style="text-align: center;">' +
+            Number(feature.properties["SHAPE_Leng"]).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }) +
+            "</td>\
+                    </tr>";
+        }
+
+        if (!hasData) {
+          popupContent +=
+            '\
+                    <tr>\
+                        <td style="font-style: italic; color: #666; padding: 10px; text-align: center;">No data available</td>\
+                    </tr>';
+        }
+
+        popupContent += "</table>";
+        var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+        layer.bindPopup(content, { maxHeight: 400 });
+      }
+
+      function pop_swd_secondary(feature, layer) {
+        layer.on({
+          mouseout: function (e) {
+            for (var i in e.target._eventParents) {
+              if (typeof e.target._eventParents[i].resetStyle === "function") {
+                e.target._eventParents[i].resetStyle(e.target);
+              }
+            }
+          },
+          mouseover: highlightFeature,
+        });
+        var popupContent =
+          '<table>\
+                    <tr>\
+                        <th colspan="2" style="color: rgba(255,165,79,1.0); padding: 8px; font-size: 14px; text-align: center;">Secondary Storm Water Drain</th>\
+                    </tr>';
+
+        var hasData = false;
+
+        // Name
+        if (
+          feature.properties["name"] !== null &&
+          feature.properties["name"] !== undefined &&
+          feature.properties["name"] !== ""
+        ) {
+          hasData = true;
+          popupContent +=
+            '\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333; text-align: center;"><strong>Name</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td style="text-align: center;">' +
+            autolinker.link(
+              String(feature.properties["name"])
+                .replace(/'/g, "'")
+                .toLocaleString()
+            ) +
+            "</td>\
+                    </tr>";
+        }
+
+        // Length
+        if (
+          feature.properties["SHAPE_Leng"] !== null &&
+          feature.properties["SHAPE_Leng"] !== undefined
+        ) {
+          hasData = true;
+          popupContent +=
+            '\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333; text-align: center;"><strong>Length (m)</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td style="text-align: center;">' +
+            Number(feature.properties["SHAPE_Leng"]).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }) +
+            "</td>\
+                    </tr>";
+        }
+
+        if (!hasData) {
+          popupContent +=
+            '\
+                    <tr>\
+                        <td style="font-style: italic; color: #666; padding: 10px; text-align: center;">No data available</td>\
+                    </tr>';
+        }
+
+        popupContent += "</table>";
+        var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+        layer.bindPopup(content, { maxHeight: 400 });
+      }
+
       function style_municipalities() {
         return {
           pane: "pane_municipalities",
@@ -342,7 +523,7 @@
           dashArray: "",
           lineCap: "butt",
           lineJoin: "miter",
-          weight: 3,
+          weight: 1,
           fill: true,
           fillOpacity: 0.2,
           fillColor: "rgba(200,200,200,1.0)",
@@ -353,17 +534,46 @@
         return {
           pane: "pane_wards",
           opacity: 1,
-          color: "rgba(0,0,0,1.0)",
+          color: "rgba(0,0,0,1.0)", // Steel blue border
           dashArray: "",
           lineCap: "butt",
           lineJoin: "miter",
-          weight: 1.0,
+          weight: 0.5,
           fill: true,
-          fillOpacity: 0.4,
-          fillColor: "rgba(255,158,23,1.0)",
+          fillOpacity: 0.3,
+          fillColor: "rgba(135,206,250,1.0)", // Light sky blue fill
           interactive: true,
         };
       }
+
+      function style_swd_primary() {
+        return {
+          pane: "pane_swd_primary",
+          opacity: 0.8,
+          color: "rgba(65,105,225,1.0)", // Royal blue - calmer, more professional
+          dashArray: "",
+          lineCap: "round",
+          lineJoin: "round",
+          weight: 3,
+          fill: false,
+          interactive: true,
+        };
+      }
+
+      function style_swd_secondary() {
+        return {
+          pane: "pane_swd_secondary",
+          opacity: 0.8,
+          color: "rgba(100,149,237,1.0)", // Cornflower blue - lighter, less prominent
+          dashArray: "4, 6",
+          lineCap: "round",
+          lineJoin: "round",
+          weight: 2,
+          fill: false,
+          interactive: true,
+        };
+      }
+
       map.createPane("pane_municipalities");
       map.getPane("pane_municipalities").style.zIndex = 401;
       map.getPane("pane_municipalities").style["mix-blend-mode"] = "normal";
@@ -392,6 +602,36 @@
       });
       bounds_group.addLayer(layer_wards);
       map.addLayer(layer_wards);
+
+      map.createPane("pane_swd_primary");
+      map.getPane("pane_swd_primary").style.zIndex = 403;
+      map.getPane("pane_swd_primary").style["mix-blend-mode"] = "normal";
+      var layer_swd_primary = new L.geoJson(json_swd_primary, {
+        attribution: "",
+        interactive: true,
+        dataVar: "json_swd_primary",
+        layerName: "layer_swd_primary",
+        pane: "pane_swd_primary",
+        onEachFeature: pop_swd_primary,
+        style: style_swd_primary,
+      });
+      bounds_group.addLayer(layer_swd_primary);
+      map.addLayer(layer_swd_primary);
+
+      map.createPane("pane_swd_secondary");
+      map.getPane("pane_swd_secondary").style.zIndex = 404;
+      map.getPane("pane_swd_secondary").style["mix-blend-mode"] = "normal";
+      var layer_swd_secondary = new L.geoJson(json_swd_secondary, {
+        attribution: "",
+        interactive: true,
+        dataVar: "json_swd_secondary",
+        layerName: "layer_swd_secondary",
+        pane: "pane_swd_secondary",
+        onEachFeature: pop_swd_secondary,
+        style: style_swd_secondary,
+      });
+      bounds_group.addLayer(layer_swd_secondary);
+      map.addLayer(layer_swd_secondary);
 
       function pop_lakes(feature, layer) {
         layer.on({
@@ -601,7 +841,7 @@
       }
 
       map.createPane("pane_lakes");
-      map.getPane("pane_lakes").style.zIndex = 403;
+      map.getPane("pane_lakes").style.zIndex = 405;
       map.getPane("pane_lakes").style["mix-blend-mode"] = "normal";
       var layer_lakes = new L.geoJson(json_lakes, {
         attribution: "",
@@ -615,12 +855,138 @@
       bounds_group.addLayer(layer_lakes);
       map.addLayer(layer_lakes);
 
+      map.createPane("pane_flooding_locations");
+      map.getPane("pane_flooding_locations").style.zIndex = 406;
+      map.getPane("pane_flooding_locations").style["mix-blend-mode"] = "normal";
+      var layer_flooding_locations = new L.geoJson(
+        json_flood_vulnerable_locations,
+        {
+          attribution: "",
+          interactive: true,
+          dataVar: "json_flood_vulnerable_locations",
+          layerName: "layer_flooding_locations",
+          pane: "pane_flooding_locations",
+          onEachFeature: pop_flooding_locations,
+          pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, {
+              radius: 6,
+              fillColor: "#e63946",
+              color: "#000",
+              weight: 1,
+              opacity: 1,
+              fillOpacity: 0.8,
+            });
+          },
+        }
+      );
+      bounds_group.addLayer(layer_flooding_locations);
+      map.addLayer(layer_flooding_locations);
+
+      function pop_flooding_locations(feature, layer) {
+        layer.on({
+          mouseout: function (e) {
+            for (var i in e.target._eventParents) {
+              if (typeof e.target._eventParents[i].resetStyle === "function") {
+                e.target._eventParents[i].resetStyle(e.target);
+              }
+            }
+          },
+          mouseover: highlightFeature,
+        });
+        var popupContent = "<table>";
+
+        // Location Name
+        if (
+          feature.properties["LocationName"] !== null &&
+          feature.properties["LocationName"] !== undefined
+        ) {
+          popupContent +=
+            '\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333;"><strong>Location</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td>' +
+            autolinker.link(
+              String(feature.properties["LocationName"]).replace(/'/g, "'")
+            ) +
+            "</td>\
+                    </tr>";
+        }
+
+        // Ward Name
+        if (
+          feature.properties["WARD_NAME"] !== null &&
+          feature.properties["WARD_NAME"] !== undefined
+        ) {
+          popupContent +=
+            '\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333;"><strong>Ward Name</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td>' +
+            autolinker.link(
+              String(feature.properties["WARD_NAME"]).replace(/'/g, "'")
+            ) +
+            "</td>\
+                    </tr>";
+        }
+
+        // Ward Number
+        if (
+          feature.properties["WARDNO"] !== null &&
+          feature.properties["WARDNO"] !== undefined
+        ) {
+          popupContent +=
+            '\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333;"><strong>Ward Number</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td>' +
+            Number(feature.properties["WARDNO"]).toFixed(0) +
+            "</td>\
+                    </tr>";
+        }
+
+        // Zone
+        if (
+          feature.properties["ZONE"] !== null &&
+          feature.properties["ZONE"] !== undefined
+        ) {
+          popupContent +=
+            '\
+                    <tr>\
+                        <td style="font-weight: bold; color: #333;"><strong>Zone</strong></td>\
+                    </tr>\
+                    <tr>\
+                        <td>' +
+            autolinker.link(
+              String(feature.properties["ZONE"]).replace(/'/g, "'")
+            ) +
+            "</td>\
+                    </tr>";
+        }
+
+        popupContent += "</table>";
+        var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+        layer.bindPopup(content, { maxHeight: 400 });
+      }
+
       setBounds();
-      var baseMaps = {};
+      var baseMaps = {
+        "Color Base": layer_OSMStandard_0,
+        "B&W Base": layer_OSMBW,
+        "No Base": layer_NoBase,
+      };
       var overlayMaps = {
         Municipalities: layer_municipalities,
         Wards: layer_wards,
         Lakes: layer_lakes,
+        "SWD Primary": layer_swd_primary,
+        "SWD Secondary": layer_swd_secondary,
+        "Flooding Locations": layer_flooding_locations,
       };
       L.control
         .layers(baseMaps, overlayMaps, {
